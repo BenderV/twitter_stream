@@ -100,7 +100,6 @@ class TweetUrl(AuditMixin, Base):
     real_url = Column(String)
     real_url_netloc = Column(String)
     real_url_path = Column(String)
-    real_url_arxiv_id = Column(String)
 
 
 class TwitterUser(AuditMixin, Base):

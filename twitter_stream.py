@@ -116,18 +116,6 @@ class TwitterStreamListener(tweepy.StreamListener):
 
     def on_status(self, status):
         ''' Stores incoming tweets into tweets.db '''
-
-        # print("Incoming tweet...")
-        # print(status.text)
-        #
-        # if not status.entities['urls']:
-        #    return
-
-        # if any([url for url in status.entities['urls'] if 'arxiv.org' in url['expanded_url']]):
-        #    pass
-        # else:
-        #    return
-
         try:
             add_tweet(status)
             print(status.text if status.text else "")
