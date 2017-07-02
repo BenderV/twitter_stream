@@ -12,4 +12,3 @@
 - Add twitter oauth config on environement variable (see `twitter_stream.py`)
 - Add your keywords "tracks" in `twitter_tracks.csv`
 - `python3 twitter_stream.py`
-

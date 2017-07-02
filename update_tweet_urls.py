@@ -39,10 +39,6 @@ def update_tweet_url(row):
     setattr(row, 'real_url', url)
     setattr(row, 'real_url_netloc', o.netloc)
     setattr(row, 'real_url_path', o.path)
-    if o.netloc == 'arxiv.org':
-        if '/abs/' in o.path:
-            setattr(row, 'real_url_doc_id', o.path.split('/')[-1].split('v')[0])
-
     return url
 
 
