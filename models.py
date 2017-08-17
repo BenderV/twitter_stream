@@ -233,7 +233,7 @@ def add_tweet(status):
         tweet_in_db = Session.query(Tweet).filter(Tweet.id == status.id).first()
         if tweet_in_db:
             try:
-                print("Committing (update): {}".format(status.id))
+                # print("Committing (update): {}".format(status.id))
                 for col in ['favorite_count', 'retweeted', 'retweet_count']:
                     setattr(tweet_in_db, col, tweet_data[col])
                 Session.commit()
@@ -242,7 +242,7 @@ def add_tweet(status):
                 print(e)
         else:
             try:
-                print("Committing (add): {}".format(status.id))
+                # print("Committing (add): {}".format(status.id))
                 tweet = Tweet(**tweet_data)
                 Session.add(tweet)
                 Session.commit()

@@ -2,6 +2,7 @@ import argparse
 import tweepy
 import sys
 import os
+from raven import Client
 from models import Tweet, add_tweet
 from sqlalchemy import desc
 import sqlalchemy
@@ -11,6 +12,9 @@ CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
 
 OAUTH_TOKEN = os.environ.get("TWITTER_OAUTH_TOKEN")
 OAUTH_TOKEN_SECRET = os.environ.get("TWITTER_OAUTH_TOKEN_SECRET")
+
+SENTRY_CLIENT = os.environ["SENTRY_CLIENT"]
+client = Client(SENTRY_CLIENT)
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
@@ -24,6 +28,7 @@ if (not API):
 
 
 def twitter_search(since_id, search_query):
+    error_count = 0
     max_id = None
     print('Query: \n\t%s' % search_query)
     print('Last id: \n\t%s' % since_id)
@@ -32,17 +37,24 @@ def twitter_search(since_id, search_query):
             new_tweets = API.search(q=search_query, count=100,
                                     max_id=max_id,
                                     since_id=str(since_id))
-            print(len(new_tweets))
-            if not new_tweets:
-                print("No more tweets found")
-                break
-            for tweet in new_tweets:
-                add_tweet(tweet)
-            max_id = str(new_tweets[-1].id - 1)
         except tweepy.TweepError as e:
             # Just exit if any error
+            error_count += 1
             print("some error : " + str(e))
+            # client.captureMessage('on_error: {}'.format(e))
+            client.captureException()
+            if error_count > 2:
+                break
+            else:
+                print('Retry...')
+                continue
+        print(len(new_tweets))
+        if not new_tweets:
+            print("No more tweets found")
             break
+        for tweet in new_tweets:
+            add_tweet(tweet)
+        max_id = str(new_tweets[-1].id - 1)
     print("End")
 
 
